@@ -1,0 +1,69 @@
+{ // VLESS + Reality
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "listen": "0.0.0.0",
+      "port": 443,    // 理论上可以随便改，不过从访问梯子的行为上，我个人认为使用 443 比较合适
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "你生成的的UUID",    // 可以由命令 xray uuid 生成
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "你喜欢的网站:443",    // 如 learn.microsoft.com:443
+          "xver": 0,
+          "serverNames": ["你喜欢的网站"],    // 如 learn.microsoft.com
+          "privateKey": "你生成的私钥",    // 可以由命令 xray x25519 生成
+          "shortIds": [""]    // 个人使用可以留空
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ],
+  "dns": {
+    "servers": [
+      "8.8.8.8",
+      "1.1.1.1",
+      "2001:4860:4860::8888",
+      "2606:4700:4700::1111",
+      "localhost"
+    ]
+  },
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "block"
+      }
+    ]
+  }
+}
